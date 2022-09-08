@@ -1,24 +1,34 @@
 export enum COMMAND {
 	NOOP = 0,
 	CALL,
+	/** второй вргуметр регистр/константа */
 	ADD,
+	/** второй аргуметр регистр */
+	ADD_R,
+	/** второй аргуметр константа (constant) */
+	ADD_C,
+	/** второй вргуметр регистр/константа */
 	SET,
+	/** второй аргуметр регистр */
+	SET_R,
+	/** второй аргуметр константа (constant) */
+	SET_C,
 	FUNC,
 	PARAM,
 	RETURN,
-	GOTO,
+	JUMP,
 	LABEL,
 	PRINT,
 	IF_LESS,
 	IF_EQUAL,
-	IF_BIGGER
+	IF_BIGGER,
 }
 
 export enum REGISTER {
 	RESULT = 'RESULT',
 	RETURN = 'RESULT',
 	MOUSE_X = 'MOUSE_X',
-	MOUSE_Y = 'MOUSE_Y'
+	MOUSE_Y = 'MOUSE_Y',
 }
 
 async function NextTick(): Promise<void> {
@@ -70,8 +80,22 @@ export class VM {
 					});
 					line.Args[0] = funcLine ? funcLine.Line : -1;
 					break;
-				case COMMAND.GOTO:
+				case COMMAND.JUMP:
 					line.Args[0] = getLabelLine(line.Args[0]);
+					break;
+				case COMMAND.SET:
+					if (/^[0-9]+$/.test(line.Args[1])) {
+						line.Command = COMMAND.SET_C;
+					} else {
+						line.Command = COMMAND.SET_R;
+					}
+					break;
+				case COMMAND.ADD:
+					if (/^[0-9]+$/.test(line.Args[1])) {
+						line.Command = COMMAND.ADD_C;
+					} else {
+						line.Command = COMMAND.ADD_R;
+					}
 					break;
 				case COMMAND.IF_LESS:
 				case COMMAND.IF_BIGGER:
@@ -84,6 +108,8 @@ export class VM {
 			return line;
 		});
 
+		console.log({ code });
+
 		return code;
 	}
 	protected register: Map<string, number> = new Map();
@@ -95,7 +121,10 @@ export class VM {
 	protected isDebug = false;
 	public TickCount = 0;
 
-	constructor(protected code: Code) {}
+	constructor(
+		/** @protected */
+		public code: Code,
+	) {}
 
 	public get CurrentIndex(): number {
 		return (
@@ -139,19 +168,38 @@ export class VM {
 				debug.innerHTML += `${JSON.stringify({
 					Command: (COMMAND[Command] + '____________').slice(0, 10),
 					Args,
-					Line
+					Line,
 				})}<br>`;
 			}
 			switch (Command) {
 				case COMMAND.NOOP:
+					break;
+				case COMMAND.SET_C:
+					this.ToRegister(Args[0], Args[1]);
+					break;
+				case COMMAND.SET_R:
+					this.ToRegister(Args[0], this.FromRegister(Args[1]) ?? 0);
 					break;
 				case COMMAND.SET:
 					this.ToRegister(Args[0], this.GetValue(Args[1]));
 					break;
 				case COMMAND.ADD:
 					this.ToRegister(
-						REGISTER.RESULT,
-						this.GetValue(Args[0]) + this.GetValue(Args[1])
+						Args[0],
+						this.GetValue(Args[0]) + this.GetValue(Args[1]),
+					);
+					break;
+				case COMMAND.ADD_C:
+					this.ToRegister(
+						Args[0],
+						this.FromRegister(Args[0]) + Args[1],
+					);
+					break;
+				case COMMAND.ADD_R:
+					this.ToRegister(
+						Args[0],
+						(this.FromRegister(Args[0]) ?? 0) +
+							(this.FromRegister(Args[1]) ?? 0),
 					);
 					break;
 				case COMMAND.RETURN:
@@ -162,7 +210,7 @@ export class VM {
 				case COMMAND.CALL:
 					const nextCommandLine = Args[0];
 					const _args = Args.slice(1).map((arg) =>
-						this.GetValue(arg)
+						this.GetValue(arg),
 					);
 					this.stackParams.push(_args);
 					this.stackIndexs.push(nextCommandLine);
@@ -172,18 +220,18 @@ export class VM {
 					const key = Args[1];
 					this.ToRegister(
 						key,
-						this.GetValue(this.GetParam(indexParam))
+						this.GetValue(this.GetParam(indexParam)),
 					);
 					break;
 				case COMMAND.PRINT:
 					if (this.isDebug) {
 						this.Print([
 							`[${Line + 1}]:`,
-							...Args.map((arg) => this.GetValue(arg))
+							...Args.map((arg) => this.GetValue(arg)),
 						]);
 					}
 					break;
-				case COMMAND.GOTO:
+				case COMMAND.JUMP:
 					const newLine = Args[0];
 					this.SetCurrentIndex(newLine);
 					break;

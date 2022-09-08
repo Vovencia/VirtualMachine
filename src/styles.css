@@ -1,3 +1,107 @@
+* {
+	box-sizing: border-box;
+}
+
 body {
-  font-family: sans-serif;
+	font-family: sans-serif;
+}
+
+html,
+body,
+#vm {
+	width: 100%;
+	height: 100%;
+	margin: 0;
+	padding: 0;
+}
+
+#vm {
+	display: flex;
+	flex-direction: column;
+}
+#vm-top {
+	display: flex;
+	align-items: center;
+	justify-content: flex-end;
+	padding: 10px;
+	flex-grow: 0;
+	flex-shrink: 0;
+	width: 100%;
+	height: 50px;
+	background: #fafafa;
+	border-bottom: 1px solid #ccc;
+}
+#vm-body {
+	display: flex;
+	flex-direction: row;
+	flex-grow: 1;
+	flex-shrink: 1;
+}
+#vm-section {
+	display: flex;
+	flex-direction: row;
+	flex-grow: 1;
+	flex-shrink: 1;
+	width: calc(100% - 300px);
+	overflow: auto;
+}
+#vm-section > * {
+	flex-grow: 1;
+	flex-shrink: 1;
+}
+#vm-aside {
+	display: flex;
+	flex-direction: row;
+	flex-grow: 1;
+	flex-shrink: 1;
+	width: 300px;
+	border-left: 1px solid #ccc;
+	font-size: 12px;
+	line-height: 1;
+	align-items: flex-start;
+}
+#vm-registers {
+	width: 50%;
+	padding: 10px;
+}
+#vm-stack {
+	width: 50%;
+	padding: 10px;
+}
+#vm-registers-list,
+#vm-stack-list,
+#vm-commands-list {
+	display: table;
+}
+.vm-register,
+.vm-stack,
+.vm-command {
+	display: table-row;
+}
+.vm-command.current,
+.vm-stack.current,
+.code-line.current {
+	background: #eee;
+}
+.vm-register__name,
+.vm-register__value,
+.vm-stack__name,
+.vm-stack__value,
+.vm-command__name,
+.vm-command__arg {
+	display: table-cell;
+	vertical-align: top;
+	padding: 0 10px 0 5px;
+}
+.vm-command__name,
+.vm-command__arg {
+	min-width: 50px;
+}
+#vm-commands,
+#vm-code {
+	padding: 10px;
+	font-size: 12px;
+	font-family: monospace;
+	line-height: 1.4;
+	width: 1px;
 }

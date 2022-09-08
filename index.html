@@ -1,15 +1,55 @@
 <html>
-  <head>
-    <title>Parcel Sandbox</title>
-    <meta charset="UTF-8" />
-  </head>
+	<head>
+		<title>Parcel Sandbox</title>
+		<meta charset="UTF-8" />
+		<link rel="stylesheet" href="./src/styles.css" />
+	</head>
 
-  <body>
-    <div id="app">
-      <pre id="output"></pre>
-      <pre id="debug"></pre>
-    </div>
+	<body>
+		<div id="app">
+			<pre id="output"></pre>
+			<pre id="debug"></pre>
+		</div>
 
-    <script src="src/index.ts"></script>
-  </body>
+		<div id="vm">
+			<div id="vm-top">
+				<button id="vm-next">NEXT</button>
+				<button id="vm-run">RUN</button>
+				<button id="vm-stop">STOP</button>
+				<button id="vm-reset">RESET</button>
+			</div>
+			<div id="vm-body">
+				<div id="vm-section">
+					<div id="vm-code">
+						CODE:
+						<br />
+						<br />
+						<pre id="vm-code-list"></pre>
+					</div>
+					<div id="vm-commands" style="display: none;">
+						COMMANDS:
+						<br />
+						<br />
+						<div id="vm-commands-list"></div>
+					</div>
+				</div>
+				<div id="vm-aside">
+					<div id="vm-registers">
+						REGISTERS:
+						<br />
+						<br />
+						<div id="vm-registers-list"></div>
+					</div>
+					<div id="vm-stack">
+						STACK:
+						<br />
+						<br />
+						<div id="vm-stack-list"></div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<script src="src/index.ts"></script>
+	</body>
 </html>

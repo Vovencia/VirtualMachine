@@ -14,7 +14,7 @@ export const code = `
 
 	FUNC: goto_test
 		PRINT: 10
-		GOTO: goto_test_3
+		JUMP: goto_test_3
 		PRINT: 20
 		LABEL: goto_test_3
 		PRINT: 30
@@ -25,13 +25,12 @@ export const code = `
 		SET: i, 0
 		LABEL: Loop_start
 			IF_LESS: i, 10000, Loop_body
-			GOTO: Loop_exit
+			JUMP: Loop_exit
 
 			LABEL: Loop_body
 				ADD: i, 1
-				SET: i, RESULT
 				PRINT: i
-				GOTO: Loop_start
+				JUMP: Loop_start
 
 			LABEL: Loop_exit
 		RETURN: 0
@@ -40,6 +39,6 @@ export const code = `
 		PARAM: 0, P1
 		PARAM: 1, P2
 		ADD: P1, P2
-		PRINT: P1, P2, RESULT
-	RETURN: RESULT
+		PRINT: P1, P2
+	RETURN: P1
 `;
